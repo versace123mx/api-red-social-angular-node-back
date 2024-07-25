@@ -40,8 +40,8 @@ const login = async (req,res) => {
 
     try {
         
-        //verifico si el usuario existe
-        const user = await User.findOne({email})
+        //verifico si el usuario existe y su estado es true
+        const user = await User.findOne({email,estado:true})
         if(!user){
             return res.status(400).json({ status: "error", msg: "Usuario no encontrado" })
         }
