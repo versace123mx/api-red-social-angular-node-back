@@ -149,9 +149,38 @@ const followers = async (req, res) => {
     }
 }
 
+//Accion para mostrar el numero de usuarios que sigo y cuantos me siguen como usuario logueado
+const followsCount =  async (req, res) => {
+
+    try {
+
+        //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
+        const [totalFollow, totalFollowing] = await Promise.all([
+            Follow.countDocuments({user:req.usuario.id,estado: true}),
+            Follow.countDocuments({followed:req.usuario.id,estado: true})
+        ])
+        
+        if( !totalFollow && !totalFollowing ){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
+        }
+
+        res.status(200).json({ status: "success", msg:"desde el contador de seguidores y siguiendo",
+        data:[{
+            follow:totalFollow,
+            followme:totalFollowing
+        }]})
+
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Eror en la operacion, no se pudo ejecutar",data:[], error })
+    }
+
+}
+
+
 export{
     follow,
     unfollow,
     followin,
-    followers
+    followers,
+    followsCount
 }

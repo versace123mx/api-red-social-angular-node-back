@@ -1,5 +1,5 @@
 import { register, login, profile, list, update, updateImage, muestraImagenPerfil } from './user.js'
-import { follow, unfollow, followin, followers } from './follow.js'
+import { follow, unfollow, followin, followers, followsCount } from './follow.js'
 import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser, updateUploadImage, showMediaforId, showPublicationForFollowing } from './publication.js'
 
 export {
@@ -21,5 +21,6 @@ export {
     showPublicationsForUser,
     updateUploadImage,
     showMediaforId,
-    showPublicationForFollowing
+    showPublicationForFollowing,
+    followsCount
 }

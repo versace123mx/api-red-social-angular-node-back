@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { body, check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { follow, unfollow, followin, followers } from '../controllers/index.js'
+import { follow, unfollow, followin, followers, followsCount } from '../controllers/index.js'
 
 const route = Router();
 
@@ -20,5 +20,9 @@ route.get('/follow/followin',validarJWT,followin)
 
 //Ruta para mostrar los usuarios que me siguen
 route.get('/follow/followers',validarJWT,followers)
+
+//Ruta para mostrar cuantos usuarios sigo y cuandos me siguen
+route.get('/follow/followsCount',validarJWT,followsCount)
+
 
 export default route
