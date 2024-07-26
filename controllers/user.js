@@ -70,9 +70,9 @@ const profile = async (req,res) => {
     const { id } = req.params
     
     //verifico si el usuario existe
-    const user = await User.findById(id)
+    const user = await User.findOne({_id:id, estado:true}).select("-email -update_at")
     if(!user){
-        return res.status(400).json({ status: "error", msg: "Usuario no encontrado" })
+        return res.status(400).json({ status: "error", msg: "Usuario no encontrado",data:[] })
     }
 
     return res.status(200).json({ status: "success", msg: "ruta de profile",data:user})
@@ -86,15 +86,19 @@ const list = async (req, res) => {
     if(isNaN(limite) || isNaN(pagina)){
         return res.json({ status: "error", msj: 'Los valores deben de ser numeros' });
     }
-
-    //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
-    const [total, usuarios] = await Promise.all([
+    try {
+        //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
+        const [total, usuarios] = await Promise.all([
             User.countDocuments({estado: true}),
             User.find({estado: true}).skip((pagina-1)*limite).limit(limite)
         ])
-    const totalPaginas = Math.ceil(total/limite)
-    res.status(200).json({ status: "success", msg:"desde el listado",
-        totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,data:usuarios})
+        const totalPaginas = Math.ceil(total/limite)
+        res.status(200).json({ status: "success", msg:"desde el listado",
+            totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,data:usuarios})    
+    } catch (error) {
+        return res.status(400).json({ status: "error", msg: "Problema al obtener los usuarios",data:[],error })
+    }
+    
 }
 
 //Metodo para actualizar datos basicos
@@ -103,10 +107,10 @@ const update = async (req, res) => {
     const datos = req.body
     datos.update_at = Date.now()
     try {
-        const userUpdate = await User.findByIdAndUpdate(req.usuario.id,datos, {new: true})
+        const userUpdate = await User.findByIdAndUpdate(req.usuario.id,datos, {new: true}).select("-email -update_at")
         res.status(200).json({ status: "success", msg:"desde update",data:userUpdate})
     } catch (error) {
-        res.status(400).json({ status: "error", msg:"no se pudieron actualizar los datos.",data:'',error})
+        return res.status(400).json({ status: "error", msg:"no se pudieron actualizar los datos.",data:[],error})
     }
 }
 
@@ -116,19 +120,19 @@ const updateImage = async (req,res) => {
     try {
         const { imagen } = req.usuario
     
-        const pathImage = './uploads/' + imagen //creamos la ruta de la imagen previa
+        const pathImage = './uploads/img-user/' + imagen //creamos la ruta de la imagen previa
         //verificamos si existe la imagen
         if (fs.existsSync(pathImage)) {
                 fs.unlinkSync(pathImage)//en caso de que la imagen previa exista procedemos a eliminarla
         }
 
-        const nombre = await subirArchivo(req.files, undefined)
+        const nombre = await subirArchivo(req.files, undefined,'img-user')
         req.usuario.imagen = nombre
         req.usuario.update_at = Date.now()
         await req.usuario.save({ new: true })
         res.status(200).json({ status: "success", msg:"Imagen Actualizada Correctamente"})
     } catch (error) {
-        res.status(400).json({ status: "error", msg:"No se pudo actualizar la imagen.",data:'',error})
+        return res.status(400).json({ status: "error", msg:"No se pudo actualizar la imagen.",data:[],error})
     }
 
 }
@@ -138,7 +142,7 @@ const muestraImagenPerfil = (req,res) => {
 
     try {
         //creamos la ruta de la imagen previa
-        const pathImage = `${process.cwd()}/uploads/${req.usuario.imagen}` 
+        const pathImage = `${process.cwd()}/uploads/img-user/${req.usuario.imagen}` 
         
         //verificamos si existe la imagen
         if (fs.existsSync(pathImage)) {
@@ -146,7 +150,7 @@ const muestraImagenPerfil = (req,res) => {
         }
 
     } catch (error) {
-        res.status(400).json({ status: "error", msg:"Error Al obtenr la Imagen.",data:'',error})
+        return res.status(400).json({ status: "error", msg:"Error Al obtener la Imagen.",data:[],error})
     }
 
     const pathImage = `${process.cwd()}/assets/no-image.jpg`
