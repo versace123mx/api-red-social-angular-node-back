@@ -240,6 +240,25 @@ const showPublicationForFollowing = async (req, res) => {
     }
 }
 
+//Mostrar el numero de publicaciones del usuario logueado
+const showPublicationCountforUser = async (req, res) => {
+
+    try {
+        const countPublication = await Publication.countDocuments({user:req.usuario.id,estado: true});
+        if(!countPublication){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
+        }
+
+        res.status(200).json({ status: "success", msg:"desde el contador de publicaciones",
+            data:[{
+                totalPublicaciones:countPublication
+            }]})
+
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Eror en la operacion, no se pudo ejecutar",data:[], error })
+    }
+}
+
 export {
     createPublication,
     showPublication,
@@ -248,5 +267,6 @@ export {
     showPublicationsForUser,
     updateUploadImage,
     showMediaforId,
-    showPublicationForFollowing
+    showPublicationForFollowing,
+    showPublicationCountforUser
 }

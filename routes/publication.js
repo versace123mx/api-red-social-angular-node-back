@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser, updateUploadImage, showMediaforId, showPublicationForFollowing } from '../controllers/index.js'
+import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser, updateUploadImage, showMediaforId, showPublicationForFollowing, showPublicationCountforUser } from '../controllers/index.js'
 
 const route = Router();
 
@@ -55,5 +55,7 @@ route.get('/publication/show-image-publication/:id',[
 //Mostrar las publicaciones de usuarios que sigue el usuario logueado
 route.get('/publication/show-publication-following',validarJWT,showPublicationForFollowing)
 
+//Mostrar el numero total de publicaciones del usuario logueado
+route.get('/publication/show-me-publication-account',validarJWT,showPublicationCountforUser)
 
 export default route
