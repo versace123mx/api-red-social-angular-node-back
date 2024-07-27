@@ -1,7 +1,7 @@
 import {Router} from "express";
 import { body, check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { saveMessage, showMessageRecived } from '../controllers/index.js'
+import { saveMessage, showMessageRecived, showMessagesSend, showCountMessagesRecivedNoView, checkMessagesRecivedView } from '../controllers/index.js'
 
 const route = Router();
 
@@ -15,25 +15,19 @@ route.post('/message/sendMessage',[
     validarCampos
 ],saveMessage)
 
-//Ruta para mostrar todos los mensajes del usuario logueado
+//Ruta para mostrar todos los mensajes recividos del usuario logueado
 route.get('/message/showMessageRecived',validarJWT,showMessageRecived)
 
-/*
-//Ruta para dejar de seguir a un usuario
-route.delete('/message/unfollow/:id',[
+//Ruta para mostrar todos los mensajes enviados del usuario logueado
+route.get('/message/showMessagesSend',validarJWT,showMessagesSend)
+
+//Ruta para mostrar el numero de mensages no leidos
+route.get('/message/showMessagesNoView',validarJWT,showCountMessagesRecivedNoView)
+
+//Ruta para marcar un mensaje como leido
+route.put('/message/checkMessagesView/:id',[
     validarJWT,
-    check('id','No es un id de mongo valido').isMongoId(),
+    check('id','El id no es un id de Mongo Valido').isMongoId(),
     validarCampos
-],unfollow)
-
-//Ruta para mostrar los usuarios que sigo
-route.get('/message/followin',validarJWT,followin)
-
-//Ruta para mostrar los usuarios que me siguen
-route.get('/message/followers',validarJWT,followers)
-
-//Ruta para mostrar cuantos usuarios sigo y cuandos me siguen
-route.get('/message/followsCount',validarJWT,followsCount)
-
-*/
+],checkMessagesRecivedView)
 export default route
