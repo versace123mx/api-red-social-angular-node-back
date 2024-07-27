@@ -5,7 +5,7 @@ import fileUpload from 'express-fileupload'
 
 import { dbConecction } from "./database/connection.js";
 //las rutas estan el en index y el index llama a cada ruta, aplique la del nombre por default que aplico juanpablo
-import { userRouter, publicationRouter, followRouter } from './routes/index.js'
+import { userRouter, publicationRouter, followRouter, messageRouter } from './routes/index.js'
 
 dotenv.config(); //iniciando variables de entorno
 dbConecction(); //conexion base de datos Mongo
@@ -39,7 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))//para recibir datos desde un formulario si carga de imagenes postman -> body -> x-www-form-urlencoded o form-data
 
 //Crear Rutas, como todas comienzan con /api ahi mandamos todas en el array
-app.use("/api/red-social",[userRouter,publicationRouter,followRouter])
+app.use("/api/red-social",[userRouter, publicationRouter, followRouter, messageRouter])
 
 // Middleware para manejar rutas no encontradas
 app.use((req, res) => {
