@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import fileUpload from 'express-fileupload'
+import responseTime from "response-time";
 
 import { dbConecction } from "./database/connection.js";
 //las rutas estan el en index y el index llama a cada ruta, aplique la del nombre por default que aplico juanpablo
@@ -27,6 +28,10 @@ const corsOptions = {
     }
 }
 app.use(cors(corsOptions))
+
+
+//Habilitamos el middleware de response time, genera una nueva respuesta de header con el nombre X-Response-Time
+app.use(responseTime())
 
 //FileUpload carga de archivos
 app.use(fileUpload({
