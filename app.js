@@ -17,7 +17,7 @@ const puerto = process.env.PUERTO_EXPRESS || 3000;
 
 //configurar cors
 //Asemos uso de cors para solo permitir ciertos dominios se conecten a nuestra API
-const dominiosPermitidos = [process.env.URL_CONFIRMAR];
+const dominiosPermitidos = [process.env.URL_CONFIRMAR,process.env.URL_FRONT];
 const corsOptions = {
     origin: function(origin, callback) {
         if(dominiosPermitidos.indexOf(origin) !== -1){
