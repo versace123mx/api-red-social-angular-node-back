@@ -1,5 +1,6 @@
 import User from '../models/User.js'
 import Follow from '../models/Follow.js'
+import Publication from '../models/Publication.js'
 import {mongoose} from "mongoose";
 
 
@@ -149,25 +150,27 @@ const followers = async (req, res) => {
     }
 }
 
-//Accion para mostrar el numero de usuarios que sigo y cuantos me siguen como usuario logueado
+//Accion para mostrar el numero de usuarios que sigo y cuantos me siguen, cuantas publicaciones he realizado como usuario logueado
 const followsCount =  async (req, res) => {
 
     try {
 
         //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
-        const [totalFollow, totalFollowing] = await Promise.all([
+        const [totalFollow, totalFollowing, totalPublications] = await Promise.all([
             Follow.countDocuments({user:req.usuario.id,estado: true}),
-            Follow.countDocuments({followed:req.usuario.id,estado: true})
+            Follow.countDocuments({followed:req.usuario.id,estado: true}),
+            Publication.countDocuments({user:req.usuario.id,estado: true})
         ])
         
-        if( !totalFollow && !totalFollowing ){
+        if( !totalFollow && !totalFollowing && !totalPublications ){
             return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
         }
 
         res.status(200).json({ status: "success", msg:"desde el contador de seguidores y siguiendo",
         data:[{
             follow:totalFollow,
-            followme:totalFollowing
+            followme:totalFollowing,
+            publication:totalPublications
         }]})
 
     } catch (error) {
