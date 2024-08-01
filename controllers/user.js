@@ -56,7 +56,7 @@ const login = async (req,res) => {
         const token = generarJWT(user.id)
 
         res.status(200).json({status:"success",msg:"login",
-                                data:{name:user.name,surname:user.surname,nick:user.nick,email:user.email,token}})
+                                data:{name:user.name,surname:user.surname,nick:user.nick,email:user.email,imagen:user.imagen,token}})
     } catch (error) {
         return res.status(400).json({ status:"error", msg: 'Error en la generacion del token'})
     }
@@ -129,8 +129,9 @@ const updateImage = async (req,res) => {
         const nombre = await subirArchivo(req.files, undefined,'img-user')
         req.usuario.imagen = nombre
         req.usuario.update_at = Date.now()
-        await req.usuario.save({ new: true })
-        res.status(200).json({ status: "success", msg:"Imagen Actualizada Correctamente"})
+        const resp = await req.usuario.save({ new: true })
+        console.log(resp.imagen)
+        res.status(200).json({ status: "success", msg:"Imagen Actualizada Correctamente",data:resp.imagen})
     } catch (error) {
         return res.status(400).json({ status: "error", msg:"No se pudo actualizar la imagen.",data:[],error})
     }
