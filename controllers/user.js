@@ -130,7 +130,6 @@ const updateImage = async (req,res) => {
         req.usuario.imagen = nombre
         req.usuario.update_at = Date.now()
         const resp = await req.usuario.save({ new: true })
-        console.log(resp.imagen)
         res.status(200).json({ status: "success", msg:"Imagen Actualizada Correctamente",data:resp.imagen})
     } catch (error) {
         return res.status(400).json({ status: "error", msg:"No se pudo actualizar la imagen.",data:[],error})
