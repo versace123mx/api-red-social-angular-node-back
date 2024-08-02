@@ -59,7 +59,7 @@ route.get('/mostrar-imagen-perfil',validarJWT,muestraImagenPerfil)
 //Ruta para mostrar la imagen por nombre
 route.get('/mostrar-imagen-perfil-nameImage/:nombreImagen',[
     check('nombreImagen','El nombre de la imagen es obligatorio enviarlo en la url').notEmpty()
-],muestraImagenPerfilXNombre) 
+],muestraImagenPerfilXNombre)  
 
 
 export default route
