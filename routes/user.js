@@ -57,7 +57,9 @@ route.put('/update-image',[validarJWT,validarArchivoSubir],updateImage)
 route.get('/mostrar-imagen-perfil',validarJWT,muestraImagenPerfil)
 
 //Ruta para mostrar la imagen por nombre
-route.get('/mostrar-imagen-perfil-nameImage/:nombreImagen',muestraImagenPerfilXNombre)
+route.get('/mostrar-imagen-perfil-nameImage/:nombreImagen',[
+    check('nombreImagen','El nombre de la imagen es obligatorio enviarlo en la url').notEmpty()
+],muestraImagenPerfilXNombre)
 
 
 export default route
