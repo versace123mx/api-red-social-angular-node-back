@@ -159,6 +159,28 @@ const muestraImagenPerfil = (req,res) => {
 
 }
 
+//Muestra imagen por nombre
+const muestraImagenPerfilXNombre = (req,res) => {
+
+    const { nombreImagen } = req.params
+    try {
+        //creamos la ruta de la imagen previa
+        const pathImage = `${process.cwd()}/uploads/img-user/${nombreImagen}` 
+        
+        //verificamos si existe la imagen
+        if (fs.existsSync(pathImage)) {
+            return res.sendFile(pathImage)
+        }
+
+    } catch (error) {
+        return res.status(400).json({ status: "error", msg:"Error Al obtener la Imagen.",data:[],error})
+    }
+
+    const pathImage = `${process.cwd()}/assets/no-image.jpg`
+    return res.sendFile(pathImage)
+
+}
+
 export {
     register,
     login,
@@ -166,5 +188,6 @@ export {
     list,
     update,
     updateImage,
-    muestraImagenPerfil
+    muestraImagenPerfil,
+    muestraImagenPerfilXNombre
 }

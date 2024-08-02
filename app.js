@@ -20,7 +20,7 @@ const puerto = process.env.PUERTO_EXPRESS || 3000;
 const dominiosPermitidos = [process.env.URL_CONFIRMAR,process.env.URL_FRONT];
 const corsOptions = {
     origin: function(origin, callback) {
-        if(dominiosPermitidos.indexOf(origin) !== -1){
+        if(dominiosPermitidos.indexOf(origin) !== -1 || !origin ){
             callback(null, true)
         }else{
             callback(new Error('No permitido por CORS'))

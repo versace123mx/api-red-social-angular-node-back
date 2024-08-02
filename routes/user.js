@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { check } from 'express-validator'
 import { validarCampos, validarArchivoSubir, validarJWT } from '../middleware/index.js'
-import { register, login, profile, list , update, updateImage, muestraImagenPerfil } from "../controllers/index.js";
+import { register, login, profile, list , update, updateImage, muestraImagenPerfil, muestraImagenPerfilXNombre } from "../controllers/index.js";
 const route = Router();
 
 //Rutas publicas
@@ -55,6 +55,9 @@ route.put('/update-image',[validarJWT,validarArchivoSubir],updateImage)
 
 //Ruta para mostrar la imagen de perfil
 route.get('/mostrar-imagen-perfil',validarJWT,muestraImagenPerfil)
+
+//Ruta para mostrar la imagen por nombre
+route.get('/mostrar-imagen-perfil-nameImage/:nombreImagen',muestraImagenPerfilXNombre)
 
 
 export default route
