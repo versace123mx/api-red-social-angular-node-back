@@ -89,8 +89,13 @@ const list = async (req, res) => {
     try {
         //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
         const [total, usuarios] = await Promise.all([
-            User.countDocuments({estado: true}),
-            User.find({estado: true}).skip((pagina-1)*limite).limit(limite)
+            User.countDocuments({$and:[{estado: true},{_id: {$ne:req.usuario.id}}]}),
+            User.find({$and:[
+                    {estado: true},
+                    {_id: {$ne:req.usuario.id}}
+                ]
+            }).select("-create_at -update_at -email")
+            .skip((pagina-1)*limite).limit(limite)
         ])
         const totalPaginas = Math.ceil(total/limite)
         res.status(200).json({ status: "success", msg:"desde el listado",
