@@ -1,6 +1,7 @@
 import fs from 'fs'
 import bcrypt from 'bcryptjs'
 import User from '../models/User.js'
+import Follow from '../models/Follow.js'
 import generarJWT   from '../helper/generarJWT.js'
 import { subirArchivo } from '../helper/subir-archivo.js'
 
@@ -88,18 +89,20 @@ const list = async (req, res) => {
     }
     try {
         //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
-        const [total, usuarios] = await Promise.all([
+        const [total, usuarios,follows] = await Promise.all([
             User.countDocuments({$and:[{estado: true},{_id: {$ne:req.usuario.id}}]}),
             User.find({$and:[
                     {estado: true},
                     {_id: {$ne:req.usuario.id}}
                 ]
             }).select("-create_at -update_at -email")
-            .skip((pagina-1)*limite).limit(limite)
+            .skip((pagina-1)*limite).limit(limite),
+            Follow.find({estado: true, user:req.usuario.id}).select("followed")
         ])
+        const siguiendo = follows.map(follow => follow.followed);
         const totalPaginas = Math.ceil(total/limite)
         res.status(200).json({ status: "success", msg:"desde el listado",
-            totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,data:usuarios})    
+            totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,follows:siguiendo,data:usuarios})    
     } catch (error) {
         return res.status(400).json({ status: "error", msg: "Problema al obtener los usuarios",data:[],error })
     }
