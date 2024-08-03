@@ -39,7 +39,7 @@ const follow = async (req, res) => {
 
         const follow = new Follow({user:req.usuario.id,followed:idfolow})
         const resultFollow = await follow.save()
-        res.status(200).json({status:"success",msg:"follow correctamente"})
+        res.status(200).json({status:"success",msg:"follow correctamente",data:resultFollow})
 
     } catch (error) {
         return res.status(400).json({status:"error",msg:"No se pudo realizar el seguimiento.", error})
