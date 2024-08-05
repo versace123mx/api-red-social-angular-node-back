@@ -6,10 +6,10 @@ import { subirArchivo } from '../helper/subir-archivo.js'
 //Guardar Publicacion
 const createPublication = async (req, res) => {
 
-    const { publicacion } = req.body
+    const { text } = req.body
 
     try {
-        const modeloPublicacion = await new Publication({text:publicacion,user:req.usuario.id})
+        const modeloPublicacion = await new Publication({text,user:req.usuario.id})
         modeloPublicacion.save({new:true})
         res.status(200).json({status:"success",msg:"Publicacion guardada exitosamente",data:modeloPublicacion })
     } catch (error) {
