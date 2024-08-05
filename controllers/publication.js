@@ -221,7 +221,7 @@ const showPublicationForFollowing = async (req, res) => {
 
         const publications = await Publication.find({ user: { $in: followedUserIds},estado:true })
         .select("-estado -update_at -__v")
-        .populate('user',"-password -estado -role -imagen -update_at -__v -bio -create_at, -email")
+        .populate('user',"-password -estado -role -update_at -__v -bio -create_at, -email")
         .skip((pagina-1)*limite).limit(limite).sort({create_at:-1});
 
         //si no hay publicaciones mandamos error
