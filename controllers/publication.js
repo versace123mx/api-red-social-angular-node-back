@@ -211,13 +211,15 @@ const showPublicationForFollowing = async (req, res) => {
     try {
         
         const followedUsers = await Follow.find({ user: req.usuario.id }).select('followed');
+        const misPublicaciones = await Publication.find({ user: req.usuario.id });
 
-        //si no hay seguimiento mandamos error
-        if(!followedUsers.length){
+        //si no hay seguimiento y no tiene publicaciones mandamos error
+        if(!followedUsers.length && !misPublicaciones.length){
             return res.status(404).json({status:"success",msg:"No hay registros encontrados 1",data:[] })
         }
 
         const followedUserIds = followedUsers.map(follow => follow.followed);
+        followedUserIds.push(req.usuario.id);
 
         const publications = await Publication.find({ user: { $in: followedUserIds},estado:true })
         .select("-estado -update_at -__v")
