@@ -19,11 +19,11 @@ const PublicationSchema = mongoose.Schema({
     },
     create_at:{
         type: Date,
-        default:Date.now()
+        default:Date.now
     },
     update_at:{
         type: Date,
-        default:Date.now()
+        default:Date.now
     }
 })
 

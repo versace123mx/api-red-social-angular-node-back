@@ -22,7 +22,7 @@ const LogSchema = mongoose.Schema({
     },
     create_at:{
         type: Date,
-        default:Date.now()
+        default:Date.now
     }
 })
 
