@@ -154,12 +154,18 @@ const followers = async (req, res) => {
 const followsCount =  async (req, res) => {
 
     try {
-
+        const { id } = req.query
+        let iduser = ''
+        if(id){
+            iduser = id
+        }else{
+            iduser = req.usuario.id
+        }
         //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
         const [totalFollow, totalFollowing, totalPublications] = await Promise.all([
-            Follow.countDocuments({user:req.usuario.id,estado: true}),
-            Follow.countDocuments({followed:req.usuario.id,estado: true}),
-            Publication.countDocuments({user:req.usuario.id,estado: true})
+            Follow.countDocuments({user:iduser,estado: true}),
+            Follow.countDocuments({followed:iduser,estado: true}),
+            Publication.countDocuments({user:iduser,estado: true})
         ])
         
         if( !totalFollow && !totalFollowing && !totalPublications ){

@@ -57,7 +57,7 @@ const login = async (req,res) => {
         const token = generarJWT(user.id)
 
         res.status(200).json({status:"success",msg:"login",
-                                data:{name:user.name,surname:user.surname,nick:user.nick,email:user.email,imagen:user.imagen,token}})
+                                data:{name:user.name,surname:user.surname,nick:user.nick,email:user.email,imagen:user.imagen,id:user.id,token}})
     } catch (error) {
         return res.status(400).json({ status:"error", msg: 'Error en la generacion del token'})
     }

@@ -22,7 +22,7 @@ route.get('/follow/followin',validarJWT,followin)
 route.get('/follow/followers',validarJWT,followers)
 
 //Ruta para mostrar cuantos usuarios sigo y cuandos me siguen
-route.get('/follow/followsCount',validarJWT,followsCount)
+route.get('/follow/followsCount/:id?',validarJWT,followsCount)
 
 
 export default route
