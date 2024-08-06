@@ -89,7 +89,7 @@ const list = async (req, res) => {
     }
     try {
         //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
-        const [total, usuarios,follows] = await Promise.all([
+        const [total, usuarios,follows,followers] = await Promise.all([
             User.countDocuments({$and:[{estado: true},{_id: {$ne:req.usuario.id}}]}),
             User.find({$and:[
                     {estado: true},
@@ -97,12 +97,14 @@ const list = async (req, res) => {
                 ]
             }).select("-create_at -update_at -email")
             .skip((pagina-1)*limite).limit(limite),
-            Follow.find({estado: true, user:req.usuario.id}).select("followed")
+            Follow.find({estado: true, user:req.usuario.id}).select("followed"),
+            Follow.find({estado: true, followed:req.usuario.id}).select("user")
         ])
         const siguiendo = follows.map(follow => follow.followed);
+        const quientesigue = followers.map(follow => follow.user);
         const totalPaginas = Math.ceil(total/limite)
         res.status(200).json({ status: "success", msg:"desde el listado",
-            totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,follows:siguiendo,data:usuarios})    
+            totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,follows:siguiendo,followers:quientesigue,data:usuarios})    
     } catch (error) {
         return res.status(400).json({ status: "error", msg: "Problema al obtener los usuarios",data:[],error })
     }
