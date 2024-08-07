@@ -182,10 +182,11 @@ const showMediaforId = async (req, res) => {
         }
 
         //si existe el campo file es por que tiene una imagen asociada
+  /*      
         if(!validaPublication[0].file){
             return res.status(404).json({status:"success",msg:"No hay una imagen asociada a este registro",data:[] })
         }
-
+*/
         //creamos la ruta de la imagen previa
         const pathImage = `${process.cwd()}/uploads/publication/${validaPublication[0].file}` 
         
@@ -197,6 +198,8 @@ const showMediaforId = async (req, res) => {
     } catch (error) {
         return res.status(400).json({ status: "error", msg:"Error Al obtenr la Imagen.",data:'',error})
     }
+    const pathImage = `${process.cwd()}/assets/no-image.jpg`
+    return res.sendFile(pathImage)
 }
 
 
