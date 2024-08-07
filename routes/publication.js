@@ -47,6 +47,7 @@ route.put('/publication/uploadfile/:id',[
 
 //Mostrar Imagen de la publicacion por id de publicacion 
 route.get('/publication/show-image-publication/:id',[
+    validarJWT,
     check('id','El id no es un id de Mongo valido').isMongoId(),
     validarCampos
 ],showMediaforId)
