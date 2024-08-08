@@ -75,40 +75,45 @@ const unfollow = async (req, res) => {
 //Accion listado de usuarios que estoy siguiendo
 const followin = async (req, res) => {
 
-    try {
-        
-        const results = await Follow.aggregate([
-            {$match: { user: new mongoose.Types.ObjectId(req.usuario.id) }},
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'followed',
-                    foreignField: '_id',
-                    as: 'followedUser'
-                }
-            },
-            { $unwind: '$followedUser' },
-            {
-                $project: {
-                    _id: 0,
-                    followedUser: {
-                        name: '$followedUser.name',
-                        nick: '$followedUser.nick',
-                        email: '$followedUser.email'
-                    }
-                }
-            }
-        ]);
+    const { id } = req.params
+    const { limite = 5, pagina = 1 } = req.query //Los parametros que bienen en la query
 
-        if(!results.length){
-            return res.status(200).json({status:"success",msg:"followin ", followedUsers: 'No hay registros a mostrar' })
-        }
-        
-        
-        res.status(200).json({status:"success",msg:"followin ", followedUsers: results.map(result => result.followedUser) })
-    } catch (error) {
-        return res.status(400).json({status:"error",msg:"Error al intentar Obtener los followin.", error})
+    if(isNaN(limite) || isNaN(pagina)){
+        return res.json({ status: "error", msj: 'Los valores deben de ser numeros' });
     }
+
+    try {
+
+        //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
+        const [total, datosUser,follows,followers] = await Promise.all([
+            Follow.countDocuments({user:id,estado: true}), //cuento cuantos usuarios sigo
+            
+            //se llama a los id de los seguidores y se popula para traer sus datos desde user
+            Follow.find({user:id,estado: true}).select('followed')
+            .populate({
+                path:'followed',
+                select:'-create_at -update_at -email -password -estado -role -__v'
+            })
+            .skip((pagina-1)*limite).limit(limite).sort({create_at:-1}),
+
+            Follow.find({estado: true, user:req.usuario.id}).select("followed"),
+            Follow.find({estado: true, followed:req.usuario.id}).select("user")
+        ])
+
+        if(!datosUser.length){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
+        }
+
+        const siguiendo = follows.map(follow => follow.followed);//Devuelve arreglo de personas quien sigo para manejar el boton de follow
+        const quientesigue = followers.map(follow => follow.user);//Devuelve arreglo de personas que me sigen para manejar el boton de unfollow
+        const totalPaginas = Math.ceil(total/limite)
+        res.status(200).json({ status: "success", msg:"desde el listado x user",
+        totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,follows:siguiendo,followers:quientesigue,data:datosUser})
+
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Eror en la operacion, no se pudo ejecutar",data:[] })
+    }
+
 }
 
 //Accion listado de usuarios que me siguen

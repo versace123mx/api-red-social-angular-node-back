@@ -56,9 +56,10 @@ route.put('/update-image',[validarJWT,validarArchivoSubir],updateImage)
 //Ruta para mostrar la imagen de perfil
 route.get('/mostrar-imagen-perfil',validarJWT,muestraImagenPerfil)
 
-//Ruta para mostrar la imagen por nombre
+//Ruta para mostrar la imagen por nombre (esta rura debe llebar validarJWT pero no me funciona con validarJWT)
 route.get('/mostrar-imagen-perfil-nameImage/:nombreImagen',[
-    check('nombreImagen','El nombre de la imagen es obligatorio enviarlo en la url').notEmpty()
+    check('nombreImagen','El nombre de la imagen es obligatorio enviarlo en la url').notEmpty(),
+    validarCampos
 ],muestraImagenPerfilXNombre)  
 
 

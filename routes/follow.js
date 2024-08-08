@@ -16,7 +16,7 @@ route.delete('/follow/unfollow/:id',[
 ],unfollow)
 
 //Ruta para mostrar los usuarios que sigo
-route.get('/follow/followin',validarJWT,followin)
+route.get('/follow/followin/:id',validarJWT,followin)
 
 //Ruta para mostrar los usuarios que me siguen
 route.get('/follow/followers',validarJWT,followers)
