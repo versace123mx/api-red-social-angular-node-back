@@ -63,7 +63,7 @@ const deletePublication = async (req, res) => {
             return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
         }
     
-        res.status(200).json({status:"success",msg:"Eliminar Publicaciones",data:'' })
+        res.status(200).json({status:"success",msg:"Publicacion eliminada correctamente",data:'' })
     } catch (error) {
         return res.status(400).json({status:"error",msg:"Eror en la operacion, no se pudo ejecutar",data:[] })
     }
