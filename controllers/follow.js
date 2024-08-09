@@ -85,9 +85,11 @@ const followin = async (req, res) => {
     try {
 
         //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
-        const [total, datosUser,follows,followers] = await Promise.all([
+        const [total, nameUser, datosUser,follows,followers] = await Promise.all([
             Follow.countDocuments({user:id,estado: true}), //cuento cuantos usuarios sigo
             
+            //Traigo el nombre del usuario que hace la peticion
+            User.find({_id:id, estado:true}).select('name surname'),
             //se llama a los id de los seguidores y se popula para traer sus datos desde user
             Follow.find({user:id,estado: true}).select('followed')
             .populate({
@@ -96,8 +98,9 @@ const followin = async (req, res) => {
             })
             .skip((pagina-1)*limite).limit(limite).sort({create_at:-1}),
 
-            Follow.find({estado: true, user:req.usuario.id}).select("followed"),
-            Follow.find({estado: true, followed:req.usuario.id}).select("user")
+            //a quien sigue y quien lo sigue del usuario que hace la peticion
+            Follow.find({estado: true, user:id}).select("followed"),
+            Follow.find({estado: true, followed:id}).select("user")
         ])
 
         if(!datosUser.length){
@@ -108,7 +111,7 @@ const followin = async (req, res) => {
         const quientesigue = followers.map(follow => follow.user);//Devuelve arreglo de personas que me sigen para manejar el boton de unfollow
         const totalPaginas = Math.ceil(total/limite)
         res.status(200).json({ status: "success", msg:"desde el listado x user",
-        totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,follows:siguiendo,followers:quientesigue,data:datosUser})
+        totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,follows:siguiendo,followers:quientesigue,nameUser,data:datosUser})
 
     } catch (error) {
         return res.status(400).json({status:"error",msg:"Eror en la operacion, no se pudo ejecutar",data:[] })
