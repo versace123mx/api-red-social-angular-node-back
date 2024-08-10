@@ -42,7 +42,7 @@ const showMessageRecived = async (req, res) => {
             .select("-emmiter -receiver -update_at")
             .populate({
                 path:'emmiter',
-                select:'name surname nick'
+                select:'name surname nick imagen'
             })
         ])
 
@@ -76,7 +76,7 @@ const showMessagesSend = async (req, res) => {
             .select("-emmiter -receiver -update_at, -view -update_at")
             .populate({
                 path:'receiver',
-                select:'name surname nick'
+                select:'name surname nick imagen'
             })
         ])
 
