@@ -1,5 +1,5 @@
 import { register, login, profile, list, update, updateImage, muestraImagenPerfil, muestraImagenPerfilXNombre } from './user.js'
-import { follow, unfollow, followin, followers, followsCount } from './follow.js'
+import { follow, unfollow, followin, followers, followsCount, listfollowers } from './follow.js'
 import { createPublication, showPublication, deletePublication, showPublications, showPublicationsForUser, updateUploadImage, showMediaforId, showPublicationForFollowing, showPublicationCountforUser } from './publication.js'
 import { saveMessage, showMessageRecived, showMessagesSend, showCountMessagesRecivedNoView, checkMessagesRecivedView } from './message.js'
 
@@ -30,5 +30,6 @@ export {
     showMessagesSend,
     showCountMessagesRecivedNoView,
     checkMessagesRecivedView,
-    muestraImagenPerfilXNombre
+    muestraImagenPerfilXNombre,
+    listfollowers
 }

@@ -5,17 +5,17 @@ import {mongoose} from "mongoose";
 //Accion de guardar un mensage
 const saveMessage = async (req, res) => {
     
-    const { id, message } = req.body
-
+    const { receiver, text } = req.body
+    
     try {
 
         //verifico si existe el usuario al que se le mandara el mensaje
-        const validaUserRecepccion = User.findOne({_id:id,estdo:true})
+        const validaUserRecepccion = User.findOne({_id:receiver,estdo:true})
         if(!validaUserRecepccion){
             return res.status(400).json({status:"error",msg:"El usuario al que intentas enviarle mensage no ha sido encontrado."})
         }
 
-        const mensaje = new Message({emmiter:req.usuario.id,receiver:id, text:message})
+        const mensaje = new Message({emmiter:req.usuario.id,receiver, text})
         const resultMessage = await mensaje.save()
         res.status(200).json({status:"success",msg:"Mensaje enviado..."})
 

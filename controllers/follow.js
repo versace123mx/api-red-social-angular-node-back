@@ -202,10 +202,32 @@ const followsCount =  async (req, res) => {
 }
 
 
+//Accion listado de usuarios que me siguen
+const listfollowers = async (req, res) => {
+    //console.log(req.usuario.id)
+    try {
+
+        //se llama a los id de los seguidores y se popula para traer sus datos desde user
+        const datosUser = await Follow.find({followed:req.usuario.id, estado:true}).select('followed')
+        .populate('user',"-create_at -update_at -email -password -estado -role -__v")
+        
+        if(!datosUser.length){
+            return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
+        }
+
+        res.status(200).json({ status: "success", msg:"desde el listado de los que me siguen",data:datosUser})
+
+    } catch (error) {
+        return res.status(400).json({status:"error",msg:"Eror en la operacion, no se pudo ejecutar",data:[] })
+    }
+
+}
+
 export{
     follow,
     unfollow,
     followin,
     followers,
-    followsCount
+    followsCount,
+    listfollowers
 }

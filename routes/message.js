@@ -8,10 +8,10 @@ const route = Router();
 //Rutas para seguir a un usuario
 route.post('/message/sendMessage',[
     validarJWT,
-    check('id','El id del usuario que recibe el mensaje es obligatorio').notEmpty(),
-    check('id','El id no es un id de Mongo Valido').isMongoId(),
-    check('message','El campo mensage no debe de estar vacio').trim().toLowerCase().notEmpty(),
-    check('message','El campo mensage debe de tener al menos 5 caracteres').isLength({min:5, max:800}),
+    check('receiver','El id del usuario que recibe el mensaje es obligatorio').notEmpty(),
+    check('receiver','El id no es un id de Mongo Valido').isMongoId(),
+    check('text','El campo mensage no debe de estar vacio').trim().toLowerCase().notEmpty(),
+    check('text','El campo mensage debe de tener al menos 5 caracteres').isLength({min:5, max:800}),
     validarCampos
 ],saveMessage)
 
