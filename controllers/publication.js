@@ -117,7 +117,7 @@ const showPublicationsForUser = async (req, res) => {
         const [total, post] = await Promise.all([
             Publication.countDocuments({user:id,estado: true}),
             Publication.find({user:id,estado: true})
-            .populate('user',"-password -estado -role -update_at -__v -bio -create_at -name -nick -surname -_id -email")
+            .populate('user',"-password -estado -role -update_at -__v -bio -create_at -name -nick -surname -email")
             .skip((pagina-1)*limite).limit(limite).sort({create_at:-1})
         ])
 
