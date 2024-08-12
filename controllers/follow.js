@@ -85,7 +85,7 @@ const followin = async (req, res) => {
     try {
 
         //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
-        const [total, nameUser, datosUser,follows,followers] = await Promise.all([
+        const [total, nameUser, datosUser,follows,followers,followsUserLogin,followersUserLogin] = await Promise.all([
             Follow.countDocuments({user:id,estado: true}), //cuento cuantos usuarios sigo
             
             //Traigo el nombre del usuario que hace la peticion
@@ -100,15 +100,38 @@ const followin = async (req, res) => {
 
             //a quien sigue y quien lo sigue del usuario que hace la peticion
             Follow.find({estado: true, user:id}).select("followed"),
-            Follow.find({estado: true, followed:id}).select("user")
+            Follow.find({estado: true, followed:id}).select("user"),
+
+
+            //a quien sigue y quien lo sigue del usuario de la session
+            Follow.find({estado: true, user:req.usuario.id}).select("followed"),
+            Follow.find({estado: true, followed:req.usuario.id}).select("user")
         ])
+
+        let siguiendoUserLogin = []
+        let quientesigueUserLogin = []
+
+
+        let siguiendo = follows.map(follow => follow.followed.toString());//Devuelve arreglo de personas quien sigo para manejar el boton de follow
+        let quientesigue = followers.map(follow => follow.user.toString());//Devuelve arreglo de personas que me sigen para manejar el boton de unfollow
 
         if(!datosUser.length){
             return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
         }
 
-        const siguiendo = follows.map(follow => follow.followed);//Devuelve arreglo de personas quien sigo para manejar el boton de follow
-        const quientesigue = followers.map(follow => follow.user);//Devuelve arreglo de personas que me sigen para manejar el boton de unfollow
+        //verifico si el que hace la peticion es otro usuario y no el logueado
+        if( id != req.usuario.id){
+            siguiendoUserLogin = followsUserLogin.map(follow => follow.followed.toString());//Devuelve arreglo de personas quien sigo para manejar el boton de follow
+            quientesigueUserLogin = followersUserLogin.map(follow => follow.user.toString());//Devuelve arreglo de personas que me sigen para manejar el boton de unfollow
+
+            siguiendo = siguiendoUserLogin.filter(x => siguiendo.includes(x));
+
+            if(!siguiendo.length){
+                siguiendo = quientesigueUserLogin
+            }
+            
+        }
+        
         const totalPaginas = Math.ceil(total/limite)
         res.status(200).json({ status: "success", msg:"desde el listado x user",
         totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,follows:siguiendo,followers:quientesigue,nameUser,data:datosUser})
@@ -132,7 +155,7 @@ const followers = async (req, res) => {
     try {
 
         //Para este caso se crean dos promesas para que corra al mismo tiempo y se hace una destructuracion de arreglos
-        const [total, nameUser, datosUser,follows,followers] = await Promise.all([
+        const [total, nameUser, datosUser,follows,followers,followsUserLogin,followersUserLogin] = await Promise.all([
             Follow.countDocuments({followed:id,estado: true}), //cuento cuantos usuarios sigo
             
             //Traigo el nombre del usuario que hace la peticion
@@ -147,15 +170,39 @@ const followers = async (req, res) => {
 
             //a quien sigue y quien lo sigue del usuario que hace la peticion
             Follow.find({estado: true, user:id}).select("followed"),
-            Follow.find({estado: true, followed:id}).select("user")
+            Follow.find({estado: true, followed:id}).select("user"),
+
+
+            //a quien sigue y quien lo sigue del usuario de la session
+            Follow.find({estado: true, user:req.usuario.id}).select("followed"),
+            Follow.find({estado: true, followed:req.usuario.id}).select("user")
         ])
+
+        let siguiendoUserLogin = []
+        let quientesigueUserLogin = []
+
+        let siguiendo = follows.map(follow => follow.followed.toString());//Devuelve arreglo de personas quien sigo para manejar el boton de follow
+        let quientesigue = followers.map(follow => follow.user.toString());//Devuelve arreglo de personas que me sigen para manejar el boton de unfollow
+        
+        quientesigue = siguiendo.filter(x => quientesigue.includes(x));
 
         if(!datosUser.length){
             return res.status(404).json({status:"success",msg:"No hay registros encontrados",data:[] })
         }
 
-        const siguiendo = follows.map(follow => follow.followed);//Devuelve arreglo de personas quien sigo para manejar el boton de follow
-        const quientesigue = followers.map(follow => follow.user);//Devuelve arreglo de personas que me sigen para manejar el boton de unfollow
+        //verifico si el que hace la peticion es otro usuario y no el logueado
+        if( id != req.usuario.id){
+            siguiendoUserLogin = followsUserLogin.map(follow => follow.followed.toString());//Devuelve arreglo de personas quien sigo para manejar el boton de follow
+            quientesigueUserLogin = followersUserLogin.map(follow => follow.user.toString());//Devuelve arreglo de personas que me sigen para manejar el boton de unfollow
+
+            quientesigue = quientesigueUserLogin.filter(x => quientesigue.includes(x));
+            if(!quientesigue.length){
+                quientesigue = siguiendoUserLogin
+            }
+
+        
+        }
+        
         const totalPaginas = Math.ceil(total/limite)
         res.status(200).json({ status: "success", msg:"desde el listado x user",
         totalRegistros:total,pagina,totalPaginas,numRegistrosMostrarXPagina:limite,follows:siguiendo,followers:quientesigue,nameUser,data:datosUser})
